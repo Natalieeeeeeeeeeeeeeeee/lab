@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список завдань</title>
+    <script>
+        let db;
+        document.addEventListener("DOMContentLoaded", () => {
+            const request = indexedDB.open("tasksDB", 1);
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                db.createObjectStore("tasks", { keyPath: "id", autoIncrement: true });
+            };
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                loadTasks();
+            };
+
+            document.getElementById("addTask").addEventListener("click", () => {
+                const taskText = document.getElementById("taskInput").value;
+                if (taskText) {
+                    const transaction = db.transaction(["tasks"], "readwrite");
+                    const store = transaction.objectStore("tasks");
+                    store.add({ text: taskText });
+                    transaction.oncomplete = loadTasks;
+                }
+            });
+        });
+
+        function loadTasks() {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = "";
+            const transaction = db.transaction(["tasks"], "readonly");
+            const store = transaction.objectStore("tasks");
+            store.openCursor().onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    const li = document.createElement("li");
+                    li.textContent = cursor.value.text;
+                    taskList.appendChild(li);
+                    cursor.continue();
+                }
+            };
+        }
+    </script>
+</head>
+<body>
+    <h1>Список завдань</h1>
+    <input type="text" id="taskInput" placeholder="Нове завдання">
+    <button id="addTask">Додати</button>
+    <ul id="taskList"></ul>
+</body>
+</html>

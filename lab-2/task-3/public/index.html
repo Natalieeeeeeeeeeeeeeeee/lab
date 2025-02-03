@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Керування вкладками</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const socket = io();
+            const statusElement = document.createElement("h1");
+            document.body.appendChild(statusElement);
+            
+            socket.on("tabType", (message) => {
+                statusElement.textContent = message;
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

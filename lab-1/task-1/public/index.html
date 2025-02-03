@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список покупок</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Список покупок</h1>
+  <input type="text" id="listName" placeholder="Введіть ім'я списку" />
+  <button onclick="loadShoppingList()">Показати список</button>
+
+  <h2>Список елементів</h2>
+  <table id="shoppingTable">
+    <thead>
+      <tr>
+        <th>Ім'я</th>
+        <th>Кількість</th>
+        <th>Статус покупки</th>
+        <th>Дії</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Додати елемент</h2>
+  <input type="text" id="itemName" placeholder="Ім'я елементу" />
+  <input type="number" id="itemQuantity" placeholder="Кількість" />
+  <label>
+    Куплено?
+    <input type="checkbox" id="itemPurchased" />
+  </label>
+  <button onclick="addItem()">Додати елемент</button>
+
+  <script>
+    // Функція для завантаження списку покупок
+    async function loadShoppingList() {
+      const listName = document.getElementById('listName').value;
+      const response = await fetch(`/api/shopping-list/${listName}`);
+      const data = await response.json();
+      const tableBody = document.querySelector('#shoppingTable tbody');
+      tableBody.innerHTML = ''; // Очищення таблиці перед завантаженням нових даних
+
+      if (data.message) {
+        alert(data.message);
+        return;
+      }
+
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>${item.purchased ? 'Так' : 'Ні'}</td>
+          <td><button onclick="deleteItem('${listName}', '${item.name}')">Видалити</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Функція для додавання елемента в список
+    async function addItem() {
+      const listName = document.getElementById('listName').value;
+      const name = document.getElementById('itemName').value;
+      const quantity = parseInt(document.getElementById('itemQuantity').value);
+      const purchased = document.getElementById('itemPurchased').checked;
+
+      const response = await fetch(`/api/shopping-list/${listName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, quantity, purchased }),
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      loadShoppingList();
+    }
+
+    // Функція для видалення елемента зі списку
+    async function deleteItem(listName, itemName) {
+      const response = await fetch(`/api/shopping-list/${listName}/${itemName}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      alert(data.message);
+      loadShoppingList();
+    }
+  </script>
+</body>
+</html>

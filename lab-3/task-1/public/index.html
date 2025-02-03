@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обчислення Фібоначчі</title>
+    <script>
+        let worker;
+        document.addEventListener("DOMContentLoaded", () => {
+            worker = new Worker("script.js");
+            worker.onmessage = (event) => {
+                document.getElementById("result").textContent = "Результат: " + event.data;
+            };
+        });
+        
+        function calculateFibonacci() {
+            const n = parseInt(document.getElementById("number").value);
+            if (!isNaN(n) && n >= 0) {
+                worker.postMessage(n);
+            } else {
+                alert("Введіть коректне число!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Обчислення числа Фібоначчі</h1>
+    <input type="number" id="number" placeholder="Введіть число">
+    <button onclick="calculateFibonacci()">Обчислити</button>
+    <p id="result">Результат: </p>
+</body>
+</html>

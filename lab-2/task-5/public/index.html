@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Збереження тексту у файл</title>
+    <script>
+        async function saveFile() {
+            try {
+                const text = document.getElementById("textInput").value;
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: "text.txt",
+                    types: [{
+                        description: "Text Files",
+                        accept: { "text/plain": [".txt"] }
+                    }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(text);
+                await writable.close();
+                alert("Файл збережено успішно!");
+            } catch (error) {
+                console.error("Помилка збереження файлу:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Збереження тексту у файл</h1>
+    <textarea id="textInput" rows="10" cols="30" placeholder="Введіть текст тут..."></textarea>
+    <br>
+    <button onclick="saveFile()">Зберегти у файл</button>
+</body>
+</html>

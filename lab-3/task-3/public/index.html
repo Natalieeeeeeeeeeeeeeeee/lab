@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обробка великого JSON</title>
+    <script>
+        let worker;
+        document.addEventListener("DOMContentLoaded", () => {
+            worker = new Worker("script.js");
+            worker.onmessage = (event) => {
+                const resultContainer = document.getElementById("result");
+                resultContainer.innerHTML = "";
+                event.data.forEach(user => {
+                    const userElement = document.createElement("div");
+                    userElement.style.border = "1px solid #ddd";
+                    userElement.style.padding = "10px";
+                    userElement.style.margin = "5px";
+                    userElement.innerHTML = `<strong>ID:</strong> ${user.id} <br> <strong>Ім'я:</strong> ${user.name} <br> <strong>Email:</strong> ${user.email}`;
+                    resultContainer.appendChild(userElement);
+                });
+            };
+        });
+
+        function processJSON() {
+            fetch("https://jsonplaceholder.typicode.com/users")
+                .then(response => response.json())
+                .then(data => {
+                    worker.postMessage(data);
+                })
+                .catch(error => console.error("Помилка завантаження JSON:", error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Обробка великого JSON-файлу</h1>
+    <button onclick="processJSON()">Обробити дані</button>
+    <div id="result" style="margin-top: 20px;"></div>
+</body>
+</html>

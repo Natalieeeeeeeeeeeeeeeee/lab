@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курс криптовалют</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        h1 { margin-bottom: 20px; }
+        table { width: 50%; margin: 0 auto; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid black; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Курс криптовалют</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Курс ($)</th>
+            </tr>
+        </thead>
+        <tbody id="crypto-table"></tbody>
+    </table>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const tableBody = document.getElementById('crypto-table');
+            tableBody.innerHTML = '';
+
+            data.forEach(crypto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${crypto.name}</td><td>${crypto.price}</td>`;
+                tableBody.appendChild(row);
+            });
+        };
+
+        socket.onopen = () => console.log('Підключено до WebSocket');
+        socket.onclose = () => console.log('WebSocket-з\'єднання закрито');
+        socket.onerror = (error) => console.error('Помилка WebSocket:', error);
+    </script>
+</body>
+</html>

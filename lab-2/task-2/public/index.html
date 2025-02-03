@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Завдань</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #taskList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #taskList li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .delete-btn {
+            margin-left: 10px;
+            cursor: pointer;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список Завдань</h1>
+    <input type="text" id="taskInput" placeholder="Додати нове завдання">
+    <button onclick="addTask()">Додати</button>
+    <button onclick="clearTasks()">Очистити всі</button>
+
+    <ul id="taskList"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
